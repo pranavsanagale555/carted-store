@@ -1,0 +1,134 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CARRTED | Online Shopping</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;color:#171717;background:#fff}
+header{padding:20px 7%;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #eee}
+.logo{font-size:27px;font-weight:900;letter-spacing:2px}
+nav a{margin:0 12px;text-decoration:none;color:#222}
+button{cursor:pointer;border:0;padding:12px 20px;background:#171717;color:white;border-radius:5px}
+.hero{background:#f1eee8;padding:75px 8%;display:flex;align-items:center;justify-content:space-between;gap:30px}
+.hero h1{font-size:clamp(40px,6vw,70px);margin:0 0 15px}
+.hero p{color:#555;line-height:1.6}
+.hero img{width:48%;max-height:360px;object-fit:cover;border-radius:8px}
+section{padding:55px 7%}
+h2{font-size:30px}
+.categories,.products{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.category{background:#f5f5f5;padding:28px;text-align:center;border-radius:8px}
+.product{border:1px solid #eee;border-radius:8px;overflow:hidden}
+.product img{width:100%;height:220px;object-fit:cover}
+.details{padding:15px}
+.details p{color:#666}
+.price{font-weight:bold;font-size:19px;margin:12px 0}
+.cart{position:fixed;right:15px;bottom:15px;background:#171717;color:white;padding:16px 22px;border-radius:30px}
+#cartItems{background:#f5f5f5;padding:15px;border-radius:8px}
+footer{background:#171717;color:white;padding:35px;text-align:center}
+input{padding:12px;border:1px solid #ddd;border-radius:5px;max-width:100%}
+@media(max-width:650px){
+ header{padding:17px 4%}
+ nav a{margin:0 4px;font-size:12px}
+ .hero{flex-direction:column;padding:45px 6%}
+ .hero img{width:100%}
+ .categories,.products{grid-template-columns:repeat(2,1fr);gap:12px}
+ .product img{height:150px}
+ section{padding:35px 4%}
+}
+</style>
+</head>
+<body>
+
+<header>
+<div class="logo">CARRTED.</div>
+<nav>
+<a href="#home">Home</a>
+<a href="#shop">Shop</a>
+<a href="#categories">Categories</a>
+</nav>
+</header>
+
+<div class="hero" id="home">
+<div>
+<p>WELCOME TO CARRTED</p>
+<h1>SHOP YOUR<br>STYLE.</h1>
+<p>Discover something special. Explore our latest collection.</p>
+<a href="#shop"><button>SHOP NOW →</button></a>
+</div>
+<img src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=900" alt="Shopping collection">
+</div>
+
+<section id="categories">
+<h2>Shop Categories</h2>
+<div class="categories">
+<div class="category">👕<h3>Fashion</h3></div>
+<div class="category">⌚<h3>Accessories</h3></div>
+<div class="category">🎧<h3>Electronics</h3></div>
+</div>
+</section>
+
+<section id="shop">
+<h2>Featured Products</h2>
+<input id="search" placeholder="Search products..." oninput="render()">
+<div class="products" id="products"></div>
+</section>
+
+<section id="cart">
+<h2>Your Shopping Cart 🛒</h2>
+<div id="cartItems">Your cart is empty.</div>
+<h3 id="total">Total: ₹0</h3>
+<button onclick="checkout()">Checkout</button>
+</section>
+
+<footer>
+<h2>CARRTED.</h2>
+<p>Your style. Your choice. Your store.</p>
+<p>© 2026 CARRTED. All rights reserved.</p>
+</footer>
+
+<button class="cart" onclick="document.getElementById('cart').scrollIntoView()">🛒 Cart (<span id="count">0</span>)</button>
+
+<script>
+const products=[
+{name:"Classic Sneakers",price:1499,category:"Fashion",image:"https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=500"},
+{name:"Stylish Watch",price:1999,category:"Accessories",image:"https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500"},
+{name:"Premium Headphones",price:2499,category:"Electronics",image:"https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500"},
+{name:"Casual Backpack",price:999,category:"Accessories",image:"https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=500"},
+{name:"Fashion Sunglasses",price:799,category:"Fashion",image:"https://images.unsplash.com/photo-1511499767150-a48a237f0083?w=500"},
+{name:"Modern Shoes",price:1799,category:"Fashion",image:"https://images.unsplash.com/photo-1549298916-b41d501d3772?w=500"}
+];
+let cart=[];
+
+function render(){
+const q=document.getElementById("search").value.toLowerCase();
+document.getElementById("products").innerHTML=products
+.filter(p=>p.name.toLowerCase().includes(q))
+.map((p,i)=>`
+<div class="product">
+<img src="${p.image}" alt="${p.name}">
+<div class="details">
+<h3>${p.name}</h3>
+<p>${p.category}</p>
+<div class="price">₹${p.price.toLocaleString("en-IN")}</div>
+<button onclick="add(${products.indexOf(p)})">Add to Cart</button>
+</div></div>`).join("");
+}
+function add(i){cart.push(products[i]);updateCart();}
+function updateCart(){
+document.getElementById("count").textContent=cart.length;
+document.getElementById("total").textContent="Total: ₹"+cart.reduce((s,p)=>s+p.price,0).toLocaleString("en-IN");
+document.getElementById("cartItems").innerHTML=cart.length?
+cart.map((p,i)=>`<p>${p.name} — ₹${p.price} <button onclick="removeItem(${i})">Remove</button></p>`).join(""):"Your cart is empty.";
+}
+function removeItem(i){cart.splice(i,1);updateCart();}
+function checkout(){
+if(!cart.length){alert("Your cart is empty!");return;}
+alert("Your cart is ready! Online payment and order processing need to be connected before accepting real orders.");
+}
+render();
+</script>
+</body>
+</html>
